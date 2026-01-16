@@ -4,6 +4,7 @@
  */
 package dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -15,30 +16,47 @@ public class AnioDTO {
     private long id;
     private String nombre;
     private String descripcion;
-    private List evaluacionSemana;
-    private List listaTacticasDTO;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private String diaRendicionCuentas;
+    private List<String> evaluacionSemana;
+    private List<TacticaDTO> listaTacticasDTO;
     private boolean completado;
+    private boolean activo;
 
     
     public AnioDTO() {
     }
 
-    public AnioDTO(long id, String nombre, String descripcion, List evaluacionSemana, List listaTacticasDTO, boolean completado) {
+    public AnioDTO(long id, String nombre, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, String diaRendicionCuentas, List<String> evaluacionSemana, List<TacticaDTO> listaTacticasDTO, boolean completado, boolean activo) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.diaRendicionCuentas = diaRendicionCuentas;
+        this.evaluacionSemana = evaluacionSemana;
         this.listaTacticasDTO = listaTacticasDTO;
         this.completado = completado;
-        this.evaluacionSemana = evaluacionSemana;
+        this.activo = activo;
     }
 
-    public AnioDTO(String nombre, String descripcion, List evaluacionSemana, List listaTacticasDTO, boolean completado) {
+    public AnioDTO(String nombre, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, String diaRendicionCuentas, List<String> evaluacionSemana, List<TacticaDTO> listaTacticasDTO, boolean completado, boolean activo) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.diaRendicionCuentas = diaRendicionCuentas;
+        this.evaluacionSemana = evaluacionSemana;
         this.listaTacticasDTO = listaTacticasDTO;
         this.completado = completado;
-        this.evaluacionSemana = evaluacionSemana;
+        this.activo = activo;
     }
+    
+
+
+
+    
 
     
     public long getId() {
@@ -72,22 +90,65 @@ public class AnioDTO {
     public void setlistaTacticasDTO(List listaTacticasDTO) {
         this.listaTacticasDTO = listaTacticasDTO;
     }
-    
-    public boolean isCompletado(){
-        return completado;
-    }
-    
-    public void setCompletado(boolean completado){
-        this.completado = completado;
-    }
 
-    public List getEvaluacionSemana() {
+    
+    public List<String> getEvaluacionSemana() {
         return evaluacionSemana;
     }
 
-    public void setEvaluacionSemana(List evaluacionSemana) {
+    public void setEvaluacionSemana(List<String> evaluacionSemana) {
         this.evaluacionSemana = evaluacionSemana;
     }
+
+    public List<TacticaDTO> getListaTacticasDTO() {
+        return listaTacticasDTO;
+    }
+
+    public void setListaTacticasDTO(List<TacticaDTO> listaTacticasDTO) {
+        this.listaTacticasDTO = listaTacticasDTO;
+    }
+
+    public boolean isCompletado() {
+        return completado;
+    }
+
+    public void setCompletado(boolean completado) {
+        this.completado = completado;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public String getDiaRendicionCuentas() {
+        return diaRendicionCuentas;
+    }
+
+    public void setDiaRendicionCuentas(String diaRendicionCuentas) {
+        this.diaRendicionCuentas = diaRendicionCuentas;
+    }
+    
+
     
     
     

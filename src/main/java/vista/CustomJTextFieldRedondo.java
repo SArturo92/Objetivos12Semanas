@@ -25,7 +25,7 @@ public class CustomJTextFieldRedondo extends JTextField{
     private int roundBottomRight = 0;
     private Color borderColor = Color.BLACK;
     private float borderThickness = 1.0f;
-    private boolean borde = true;
+    private boolean borde = false;
     
     public CustomJTextFieldRedondo() {
         super.setOpaque(false);

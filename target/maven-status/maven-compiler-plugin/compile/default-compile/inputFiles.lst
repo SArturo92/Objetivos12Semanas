@@ -2,10 +2,15 @@ D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\com\mycompany\vista12se
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\controlador\Controlador.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\dto\AnioDTO.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\dto\DiasDTO.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\dto\SemanaDTO.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\dto\TacticaDTO.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\excepciones\DAOException.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\modelo\Anio12SemanasLocalDAO.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\modelo\ConfigManager.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\modelo\IAnio12SemanasDAO.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\patrones\IEstadoChangeListener.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\patrones\IPatronObservador.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\patrones\LocalDateAdapter.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\patrones\PatronFormularioNuevoAnio.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\patrones\PatronSingleton.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\util\Animaciones.java
@@ -22,6 +27,7 @@ D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\CustomPanelRedond
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\DesingColorPickerDialog.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\DesingJPanelAddTactica.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\DesingJPanelAnio.java
+D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\DesingJPanelCheckTactica.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\DesingJPanelTacticaAnio.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\FrmInicio.java
 D:\Programador\NetBeans\Objetivos12Semanas\src\main\java\vista\ViewJPanelNuevoAnio.java

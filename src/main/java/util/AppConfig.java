@@ -20,6 +20,8 @@ public class AppConfig {
         public String hoverColor = "#5a5a5a";
         public String textColor = "#F2F2F2";
         
+        public String unAvailableColor = "#9DC0CF";
+        
         public String deleteColor = "#F4320B";
         public String acceptColor = "#27F542";
         public String warningColor = "#E9D502";

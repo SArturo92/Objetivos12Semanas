@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import patrones.IPatronObservador;
 import util.AppConfig;
@@ -52,7 +51,7 @@ public final class ConfigManager {
     }
 
     private static void notifyObservers() {
-        for (IPatronObservador o : observers) {
+        for (IPatronObservador o : new HashSet<>(observers)) {
             o.onColorSaved();
         }
     }
@@ -159,11 +158,22 @@ public final class ConfigManager {
         return Color.decode(config.ui.warningColor);
     }
     
+    public static Color getUnAvailableColor(){
+        return Color.decode(config.ui.unAvailableColor);
+    }
     
 
     public static String toHex(Color c) {
-        return String.format("#%02x%02x%02x",
-                c.getRed(), c.getGreen(), c.getBlue());
+        if (c == null) {
+            return config.ui.secondaryColor; // o el color por defecto que tú decidas
+        }
+
+        return String.format(
+            "#%02x%02x%02x",
+            c.getRed(),
+            c.getGreen(),
+            c.getBlue()
+        );
     }
     
     

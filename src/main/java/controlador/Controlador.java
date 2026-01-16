@@ -14,7 +14,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import modelo.Anio12SemanasLocalDAO;
+import modelo.IAnio12SemanasDAO;
 import patrones.IPatronObservador;
+import vista.ViewJPanelSeccioAnio;
 
 /**
  *
@@ -25,9 +28,13 @@ public class Controlador implements IPatronObservador{
     
     FrmInicio inicio;
     DesingColorPickerDialog picker;
+    AnioDTO anio;
     
     JPanel jPanelSeccionDatos;
-    JPanel panelNuevoAnio;
+    JPanel panelSeccionAnio;
+    JPanel panelSeccionNuevoAnio;
+    
+    IAnio12SemanasDAO anioDAO = new Anio12SemanasLocalDAO();
     
     
     
@@ -42,10 +49,16 @@ public class Controlador implements IPatronObservador{
     
     
     private void cargarLogicaClase(){
+        anio = anioDAO.cargarAnio();
+        
         picker = new DesingColorPickerDialog(inicio, true, this);
         
         jPanelSeccionDatos = inicio.getJPanelSeccionDatos();
-        panelNuevoAnio = new ViewJPanelNuevoAnio(this);
+        
+//        if(anio != null){
+//            panelSeccionAnio = new ViewJPanelSeccioAnio();
+//        }
+        panelSeccionNuevoAnio = new ViewJPanelNuevoAnio(this);
                 
         
         cargarObservadores();
@@ -150,7 +163,23 @@ public class Controlador implements IPatronObservador{
     }
     
     private void panelInicio(){
-        sinAnio();
+        
+        
+        jPanelSeccionDatos.removeAll();
+        anio = anioDAO.cargarAnio();
+        if(anio != null){
+            panelSeccionAnio = new ViewJPanelSeccioAnio();
+            panelSeccionAnio.setBounds(0, 0, jPanelSeccionDatos.getBounds().width, jPanelSeccionDatos.getBounds().height);
+       
+            inicio.setSeleccion('h');
+            jPanelSeccionDatos.add(panelSeccionAnio);
+            jPanelSeccionDatos.revalidate();
+            jPanelSeccionDatos.repaint();
+
+        }
+        else{   
+            sinAnio();
+        }
         
     }
     
@@ -158,12 +187,12 @@ public class Controlador implements IPatronObservador{
          
         jPanelSeccionDatos.removeAll();
                 
-        panelNuevoAnio.setBounds(0, 0, jPanelSeccionDatos.getBounds().width, jPanelSeccionDatos.getBounds().height);
+        panelSeccionNuevoAnio.setBounds(0, 0, jPanelSeccionDatos.getBounds().width, jPanelSeccionDatos.getBounds().height);
         
 
         inicio.setSeleccion('n');
         
-        jPanelSeccionDatos.add(panelNuevoAnio);
+        jPanelSeccionDatos.add(panelSeccionNuevoAnio);
         jPanelSeccionDatos.revalidate();
         jPanelSeccionDatos.repaint();
     }
@@ -227,7 +256,10 @@ public class Controlador implements IPatronObservador{
     }
     
     public void guardarAnio(AnioDTO anio){
+        anioDAO.guardarAnio(anio);
         System.out.println("Se guardo");
+        cargarPanel('h');
+        inicio.comprobarSeleccion('h');
     }
     
     

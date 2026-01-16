@@ -13,9 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import vista.CustomJTextFieldRedondo;
 import util.MetodosCompartidos;
-import vista.CustomPanelRedondo;
 import patrones.IEstadoChangeListener;
 import patrones.PatronFormularioNuevoAnio;
 
@@ -30,6 +28,8 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
     
     private boolean textoValido = false;
     private boolean frecuenciaValida = true;
+    
+    private boolean creado;
     
     PatronFormularioNuevoAnio estado;
     IEstadoChangeListener listener = null;
@@ -58,7 +58,6 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
         
     }
 
-
     
     
     private void cargarDiseno(){
@@ -73,6 +72,8 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
         
         txtNomTactica.setVisible(false);
         MetodosCompartidos.addHint(txtNomTactica, "Nombre de la tactica");
+        
+        MetodosCompartidos.limitarPorAncho(txtNomTactica);
 
         
     }
@@ -141,7 +142,6 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
             colocarBordeFrecuencia(true, panelSaSelect);
             colocarBordeFrecuencia(true, panelDoSelect);
             frecuenciaValida = false;
-           // estado.setFrecuenciaValida(false);
             
         }
         
@@ -154,7 +154,6 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
             colocarBordeFrecuencia(false, panelSaSelect);
             colocarBordeFrecuencia(false, panelDoSelect);
             frecuenciaValida = true;
-           // estado.setFrecuenciaValida(true);
         }
         
         listener.onEstadoChange();
@@ -591,6 +590,7 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
 
     private void panelDoSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelDoSelectMouseClicked
         // TODO add your handling code here:
+        if(creado) return;
         comprobarSeleccion(panelDoSelect);
     }//GEN-LAST:event_panelDoSelectMouseClicked
 

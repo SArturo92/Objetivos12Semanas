@@ -42,7 +42,7 @@ public final class Animaciones {
         final boolean[] ejecutado = {false};
 
         Animator animator = new Animator.Builder(TIMING_SOURCE)
-                .setDuration(250, TimeUnit.MILLISECONDS)
+                .setDuration(450, TimeUnit.MILLISECONDS)
                 .addTarget(new TimingTargetAdapter() {
 
                     @Override
@@ -50,7 +50,7 @@ public final class Animaciones {
                         panel.setAlpha((float) fraction);
 
                         // 🔥 Ejecutar al 90%
-                        if (!ejecutado[0] && fraction >= 0.7) {
+                        if (!ejecutado[0] && fraction >= 0.9) {
                             ejecutado[0] = true;
                             SwingUtilities.invokeLater(casiAlFinal);
                         }

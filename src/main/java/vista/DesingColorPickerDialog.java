@@ -160,17 +160,28 @@ public class DesingColorPickerDialog extends javax.swing.JDialog {
     
 
     public javafx.scene.paint.Color awtToFx(Color c) {
+        if (c == null) {
+            return javafx.scene.paint.Color.TRANSPARENT; // o el color default que quieras
+        }
+
         return javafx.scene.paint.Color.rgb(
-                c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 255.0
+            c.getRed(),
+            c.getGreen(),
+            c.getBlue(),
+            c.getAlpha() / 255.0
         );
     }
 
     public Color fxToAwt(javafx.scene.paint.Color c) {
+        if (c == null) {
+            return Color.GRAY; // o null si quieres manejarlo arriba
+        }
+
         return new Color(
-                (float) c.getRed(),
-                (float) c.getGreen(),
-                (float) c.getBlue(),
-                (float) c.getOpacity()
+            (float) c.getRed(),
+            (float) c.getGreen(),
+            (float) c.getBlue(),
+            (float) c.getOpacity()
         );
     }
     
@@ -295,7 +306,9 @@ public class DesingColorPickerDialog extends javax.swing.JDialog {
             MetodosCompartidos.cargarIcono(jblIconPrimario, "/iconos/settings_ic.svg", 32, Color.decode(a.ui.primaryColor));
             MetodosCompartidos.cargarIcono(jblIconSecundario, "/iconos/settings_ic.svg", 32, Color.decode(a.ui.secondaryColor));
             
-        
+            
+            primario = fxToAwt(colorPickerPrimario.getValue());
+            secundario = fxToAwt(colorPickerSecundario.getValue());
         });
         
 

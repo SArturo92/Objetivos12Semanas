@@ -8,8 +8,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
+import modelo.ConfigManager;
 
 /**
  *
@@ -25,6 +27,8 @@ public class CustomPanelRedondo extends javax.swing.JPanel{
     private Color borderColor = Color.BLACK;
     private float borderThickness = 1.0f;
     private boolean borde = true;
+    private boolean mostrarLinea = false;
+
 
     
     
@@ -81,6 +85,10 @@ public class CustomPanelRedondo extends javax.swing.JPanel{
 
         g2.setColor(getBackground());
         g2.fill(path);
+        
+        if (mostrarLinea) {
+        dibujarLineaInclinada(g2, w, h, t);
+    }
 
         g2.dispose();
     }
@@ -124,6 +132,34 @@ public class CustomPanelRedondo extends javax.swing.JPanel{
         g2.dispose();
     }
 
+    
+    private void dibujarLineaInclinada(Graphics2D g2, double w, double h, float t) {
+
+        g2.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        g2.setColor(Color.decode("#000000"));
+
+        g2.setStroke(new BasicStroke(
+            1f,                          // grosor de la línea
+            BasicStroke.CAP_ROUND,       // extremos redondos
+            BasicStroke.JOIN_ROUND
+        ));
+
+        int margen = 0;
+
+        // de abajo-izquierda a arriba-derecha
+        g2.drawLine(
+            margen,
+            margen,
+            getWidth() - margen,
+            getHeight() - margen
+        );
+    }
+    
+    
 
     
     
@@ -186,6 +222,10 @@ public class CustomPanelRedondo extends javax.swing.JPanel{
     }
     
     
+    public void setMostrarLinea(boolean mostrar) {
+        this.mostrarLinea = mostrar;
+        repaint();
+    }
     
     
     

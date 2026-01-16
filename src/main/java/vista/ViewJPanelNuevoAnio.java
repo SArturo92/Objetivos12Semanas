@@ -7,9 +7,11 @@ package vista;
 import controlador.Controlador;
 import dto.AnioDTO;
 import dto.DiasDTO;
+import dto.SemanaDTO;
 import modelo.ConfigManager;
 import dto.TacticaDTO;
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -23,9 +25,10 @@ import javax.swing.SwingUtilities;
 import util.MetodosCompartidos;
 import util.Animaciones;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -35,6 +38,10 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javax.swing.BorderFactory;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.fxmisc.richtext.CodeArea;
@@ -57,7 +64,9 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     
     private Map<Long, DesingJPanelAddTactica> listaTacticas = new HashMap();
     
-    //private final Font fuente = MetodosCompartidos.cargarFuente("/fonts/OpenSans-Bold.ttf", 20f);
+    private final Font fuente = MetodosCompartidos.cargarFuente("/fonts/OpenSans-Bold.ttf", 20f);
+    private String selectedDia = "domingo";
+
     CodeArea editor;
     
     Controlador control;
@@ -79,6 +88,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     private void cargarDiseno(){
         MetodosCompartidos.addHint(txtNomObjetivo, "Nombre del Objetivo");
         MetodosCompartidos.cargarIcono(jblIconAddTactica, "/iconos/add_ic.svg", 32, ConfigManager.getAcceptColor());
+        MetodosCompartidos.limitarPorAncho(txtNomObjetivo);
         
         jblAdvertenciaNombreVacio.setVisible(false);
         jblAdvertencia.setVisible(false);
@@ -89,7 +99,11 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
         jPanelSeperador5.setVisible(false);
         
         
-       
+        cbManiana.setOpaque(false);
+        
+        agregarComboBoxFX();
+        
+
         
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if (event instanceof MouseEvent me && me.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -113,13 +127,13 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
 
     }
     
+    
+    
     private void cargarColores(){
         jPanelEncabezado.setBackground(ConfigManager.getPrimaryColor());
         txtNomObjetivo.setBackground(ConfigManager.getPrimaryColor());
         btnGuardar.setBackground(ConfigManager.getAcceptColor());
         
-
-
     }
 
     private void cargarEditorTextoObjetivo(){
@@ -300,6 +314,107 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     }
     
     
+    
+    private void agregarComboBoxFX(){
+        
+        CustomPanelRedondo combo = new CustomPanelRedondo(2, 2, 2, 2, false);
+        combo.setLayout(null);
+        combo.setBounds(31, 500, 250, 32);
+        combo.setBackground(ConfigManager.getBackgroundOptionColor());
+
+
+        JLabel lblValue = new JLabel("Día de rendición de cuentas");
+        lblValue.setFont(MetodosCompartidos.cargarFuente("/fonts/OpenSans-Bold.ttf", 12));
+        lblValue.setBounds(10, 0, 200, 32);
+        lblValue.setForeground(ConfigManager.getTextColor());
+        combo.add(lblValue);
+
+
+        JLabel lblArrow = new JLabel("▼");
+        lblArrow.setBounds(225, 0, 20, 32);
+        lblArrow.setForeground(ConfigManager.getTextColor());
+       // lblArrow.setHorizontalAlignment(SwingConstants.CENTER);
+        combo.add(lblArrow);
+
+
+
+        JPopupMenu popup = new JPopupMenu();
+        popup.setBorder(BorderFactory.createEmptyBorder());
+
+        String[] dias = {
+            "Domingo", "Lunes", "Martes",
+            "Miércoles", "Jueves", "Viernes", "Sábado"
+        };
+        
+        final JPanel[] selectedItem = { null };
+
+        for (String dia : dias) {
+            JPanel item = new JPanel(null);
+            item.setPreferredSize(new Dimension(250, 32));
+            item.setBackground(ConfigManager.getBackgroundOptionColor());
+            item.setOpaque(true);
+
+            JLabel lbl = new JLabel(dia);
+            lbl.setBounds(10, 0, 230, 32);
+            lbl.setForeground(ConfigManager.getTextColor());
+            item.add(lbl);
+            
+            item.addMouseListener(new MouseAdapter() {
+               @Override
+               public void mouseEntered(MouseEvent e) {
+                   if (item != selectedItem[0]) {
+                       item.setBackground(ConfigManager.getPrimaryColor());
+                   }
+               }
+
+               @Override
+               public void mouseExited(MouseEvent e) {
+                   if (item != selectedItem[0]) {
+                       item.setBackground(ConfigManager.getBackgroundOptionColor());
+                   }
+               }
+
+               @Override
+               public void mouseClicked(MouseEvent e) {
+                    if (selectedItem[0] != null) {
+                        selectedItem[0].setBackground(
+                            ConfigManager.getBackgroundOptionColor()
+                        );
+                    }
+
+                    selectedItem[0] = item;
+                    item.setBackground(ConfigManager.getPrimaryColor());
+
+                    selectedDia = dia;            
+                    lblValue.setText(dia);
+                    popup.setVisible(false);
+                }
+           });
+
+        popup.add(item);
+
+        }
+
+
+        combo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                popup.setPopupSize(250, popup.getPreferredSize().height);
+
+                popup.show(combo, 0, -188);
+            }
+        });
+
+
+    this.add(combo);
+
+
+    }
+
+    
+    
+    
+    
     private void validadorNombresYFrecuencia(){
         boolean frecuencia = true;
         boolean nombreTactica = true;
@@ -329,6 +444,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
             addTactica.setBounds(0, 40 * listaTacticas.size(), 560, 40);
 
 
+                    
             CustomPanelRedondo panelEliminar = new CustomPanelRedondo(5, 5, 5, 5, false);
                 JLabel delete = new JLabel("X");
                 delete.setHorizontalAlignment(SwingUtilities.CENTER);
@@ -490,6 +606,14 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     }
     
     
+    
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        ConfigManager.removeObserver(this);
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -539,6 +663,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
         btnGuardar = new vista.CustomPanelRedondo();
         jbTactica2 = new javax.swing.JLabel();
         jblAdvertenciaNombreVacio = new javax.swing.JLabel();
+        cbManiana = new javax.swing.JCheckBox();
 
         setBackground(new java.awt.Color(47, 47, 47));
         setPreferredSize(new java.awt.Dimension(1046, 614));
@@ -724,7 +849,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
         );
 
         jPanelSeparacion.add(jPanelSeperador);
-        jPanelSeperador.setBounds(130, 25, 320, 0);
+        jPanelSeperador.setBounds(130, 25, 320, 5);
 
         jPanelEncabezado.add(jPanelSeparacion);
         jPanelSeparacion.setBounds(0, 80, 560, 50);
@@ -890,6 +1015,14 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
         jblAdvertenciaNombreVacio.setText("El nombre no puede estar vacio");
         add(jblAdvertenciaNombreVacio);
         jblAdvertenciaNombreVacio.setBounds(30, 0, 280, 16);
+
+        cbManiana.setBackground(new java.awt.Color(47, 47, 47));
+        cbManiana.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cbManiana.setForeground(new java.awt.Color(255, 255, 255));
+        cbManiana.setText("Comenzar mañana");
+        cbManiana.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        add(cbManiana);
+        cbManiana.setBounds(31, 560, 130, 20);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jblIconAddTacticaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jblIconAddTacticaMouseClicked
@@ -930,21 +1063,53 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                 dias.put(DayOfWeek.SATURDAY,  estaSeleccionado(panel.getPanelSaSelect()));
                 dias.put(DayOfWeek.SUNDAY,    estaSeleccionado(panel.getPanelDoSelect()));
                 
+                
+                List<SemanaDTO> listaSemanas = new ArrayList<>();
                 List<DiasDTO> listaDias = new ArrayList();
                 
-                for (int i = 1; i <= 84; i++){
-                    DiasDTO dia = new DiasDTO();                           
-                    dia.setId(i);
-                    dia.setFecha(LocalDate.now().plusDays(i));
-                    dia.setNombre(dia.getFecha().getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
-                    dia.setSeleccionado(dias.get(dia.getFecha().getDayOfWeek()));
-                      
-                    listaDias.add(dia);
+                for(int i = 1; i <= 13; i++){
+                    SemanaDTO semana = new SemanaDTO();
+                    semana.setId(i);
+                    semana.setFechaInicio(LocalDate.now().plusDays(7 * (i-1)));
+                    semana.setFechaFin(semana.getFechaInicio().plusDays(6));
+                    
+                    semana.setNombre("Semana " + i);
+                    semana.setPorcentaje(0);
+                    semana.setRendicionCuentas("");
+                    
+                    
+                    for(int j = 0; j < 7; j++){
+                        DiasDTO day = new DiasDTO();
+                        day.setId(j + 1);
+                        day.setCompletado(false);
+                        day.setFecha(semana.getFechaInicio().plusDays(j));
+                        day.setSeleccionado(dias.get(day.getFecha().getDayOfWeek()));
+                        
+                        listaDias.add(day);
+                        
+                    }
+                    
+                    
+                    semana.setListaDias(listaDias);
+                    listaSemanas.add(semana);
+                    
                     
                 }
                 
+                
+//                for (int i = 1; i <= 84; i++){
+//                    DiasDTO dia = new DiasDTO();                           
+//                    dia.setId(i);
+//                    dia.setFecha(LocalDate.now().plusDays(i));
+//                    dia.setNombre(dia.getFecha().getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
+//                    dia.setSeleccionado(dias.get(dia.getFecha().getDayOfWeek()));
+//                      
+//                    listaDias.add(dia);
+//                    
+//                }
+//                
                 TacticaDTO tactica = new TacticaDTO();
-                tactica.setDiasDTO(listaDias);
+                tactica.setSemanasDTO(listaSemanas);
                 tactica.setNombre(panel.getTxtNomTactica().getText());
                 tactica.setId(identificacion);
                 
@@ -957,6 +1122,17 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                 anio.setDescripcion(editor.getText());
                 anio.setNombre(txtNomObjetivo.getText());
                 anio.setlistaTacticasDTO(tacticas);
+                anio.setActivo(true);
+              //  anio.setDiaRendicionCuentas((String)cbcDiaRendicionCuentas.getSelectedItem());
+                
+                if(cbManiana.isSelected()){
+                    anio.setFechaInicio(LocalDate.now().plusDays(1));
+                }
+                else{
+                    anio.setFechaInicio(LocalDate.now());
+                }
+                
+                anio.setFechaFin(LocalDate.now().plusDays(84));
                 
                 control.guardarAnio(anio);
             
@@ -968,6 +1144,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private vista.CustomPanelRedondo btnGuardar;
+    private javax.swing.JCheckBox cbManiana;
     private javax.swing.JPanel jPanelEncabezado;
     private javax.swing.JPanel jPanelSeccionObjetivo;
     private javax.swing.JPanel jPanelSeparacion;

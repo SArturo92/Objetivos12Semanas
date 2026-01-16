@@ -14,25 +14,28 @@ public class TacticaDTO {
     
     private long id;
     private String nombre;
-    private List DiasDTO;
+    private List<SemanaDTO> semanasDTO;
     private boolean completado;
 
     
     public TacticaDTO() {
     }
 
-    public TacticaDTO(long id, String nombre, List DiasDTO, boolean completado) {
+    
+    public TacticaDTO(long id, String nombre, List<SemanaDTO> semanasDTO, boolean completado) {
         this.id = id;
         this.nombre = nombre;
-        this.DiasDTO = DiasDTO;
+        this.semanasDTO = semanasDTO;
         this.completado = completado;
     }
 
-    public TacticaDTO(String nombre, List DiasDTO, boolean completado) {
+    public TacticaDTO(String nombre, List<SemanaDTO> semanasDTO, boolean completado) {
         this.nombre = nombre;
-        this.DiasDTO = DiasDTO;
+        this.semanasDTO = semanasDTO;
         this.completado = completado;
     }
+
+
 
     
     
@@ -52,13 +55,15 @@ public class TacticaDTO {
         this.nombre = nombre;
     }
 
-    public List getDiasDTO() {
-        return DiasDTO;
+    
+    public List<SemanaDTO> getsemanasDTO() {
+        return semanasDTO;
     }
 
-    public void setDiasDTO(List DiasDTO) {
-        this.DiasDTO = DiasDTO;
+    public void setSemanasDTO(List<SemanaDTO> semanasDTO) {
+        this.semanasDTO = semanasDTO;
     }
+
 
     public boolean isCompletado() {
         return completado;
@@ -67,6 +72,8 @@ public class TacticaDTO {
     public void setCompletado(boolean completado) {
         this.completado = completado;
     }
+    
+    
     
     
     
