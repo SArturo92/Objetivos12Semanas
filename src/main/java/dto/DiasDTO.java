@@ -70,6 +70,11 @@ public class DiasDTO {
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
+
+    @Override
+    public String toString() {
+        return "DiasDTO{" + "id=" + id + ", nombre=" + nombre + ", fecha=" + fecha + ", seleccionado=" + seleccionado + ", completado=" + completado + '}';
+    }
     
     
 

@@ -11,7 +11,6 @@ import dto.SemanaDTO;
 import modelo.ConfigManager;
 import dto.TacticaDTO;
 import java.awt.AWTEvent;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -31,6 +30,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import javafx.application.Platform;
@@ -40,8 +40,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javax.swing.BorderFactory;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.fxmisc.richtext.CodeArea;
@@ -62,7 +60,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     private final PatronFormularioNuevoAnio estado = new PatronFormularioNuevoAnio();
     
     
-    private Map<Long, DesingJPanelAddTactica> listaTacticas = new HashMap();
+    Map<Long, DesingJPanelAddTactica> listaTacticas = new LinkedHashMap<>();
     
     private final Font fuente = MetodosCompartidos.cargarFuente("/fonts/OpenSans-Bold.ttf", 20f);
     private String selectedDia = "domingo";
@@ -101,7 +99,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
         
         cbManiana.setOpaque(false);
         
-        agregarComboBoxFX();
+        agregarComboBox();
         
 
         
@@ -315,7 +313,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
     
     
     
-    private void agregarComboBoxFX(){
+    private void agregarComboBox(){
         
         CustomPanelRedondo combo = new CustomPanelRedondo(2, 2, 2, 2, false);
         combo.setLayout(null);
@@ -388,6 +386,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                     selectedDia = dia;            
                     lblValue.setText(dia);
                     popup.setVisible(false);
+                    System.out.println(selectedDia);
                 }
            });
 
@@ -1048,6 +1047,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
             
             int identificacion = 1;
             List<TacticaDTO> tacticas = new ArrayList<>();
+
             
             
             for(Map.Entry<Long, DesingJPanelAddTactica> entry : listaTacticas.entrySet()){
@@ -1065,10 +1065,10 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                 
                 
                 List<SemanaDTO> listaSemanas = new ArrayList<>();
-                List<DiasDTO> listaDias = new ArrayList();
                 
                 for(int i = 1; i <= 13; i++){
                     SemanaDTO semana = new SemanaDTO();
+
                     semana.setId(i);
                     semana.setFechaInicio(LocalDate.now().plusDays(7 * (i-1)));
                     semana.setFechaFin(semana.getFechaInicio().plusDays(6));
@@ -1077,6 +1077,7 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                     semana.setPorcentaje(0);
                     semana.setRendicionCuentas("");
                     
+                    List<DiasDTO> listaDias = new ArrayList();
                     
                     for(int j = 0; j < 7; j++){
                         DiasDTO day = new DiasDTO();
@@ -1096,22 +1097,11 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                     
                 }
                 
-                
-//                for (int i = 1; i <= 84; i++){
-//                    DiasDTO dia = new DiasDTO();                           
-//                    dia.setId(i);
-//                    dia.setFecha(LocalDate.now().plusDays(i));
-//                    dia.setNombre(dia.getFecha().getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
-//                    dia.setSeleccionado(dias.get(dia.getFecha().getDayOfWeek()));
-//                      
-//                    listaDias.add(dia);
-//                    
-//                }
-//                
+                               
                 TacticaDTO tactica = new TacticaDTO();
                 tactica.setSemanasDTO(listaSemanas);
                 tactica.setNombre(panel.getTxtNomTactica().getText());
-                tactica.setId(identificacion);
+                tactica.setId(identificacion++);
                 
                 tacticas.add(tactica);
                 
@@ -1121,9 +1111,9 @@ public class ViewJPanelNuevoAnio extends javax.swing.JPanel implements IPatronOb
                 AnioDTO anio = new AnioDTO();
                 anio.setDescripcion(editor.getText());
                 anio.setNombre(txtNomObjetivo.getText());
-                anio.setlistaTacticasDTO(tacticas);
+                anio.setListaTacticasDTO(tacticas);
                 anio.setActivo(true);
-              //  anio.setDiaRendicionCuentas((String)cbcDiaRendicionCuentas.getSelectedItem());
+                anio.setDiaRendicionCuentas(selectedDia);
                 
                 if(cbManiana.isSelected()){
                     anio.setFechaInicio(LocalDate.now().plusDays(1));

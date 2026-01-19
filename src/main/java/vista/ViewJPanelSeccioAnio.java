@@ -4,17 +4,23 @@
  */
 package vista;
 
+import controlador.Controlador;
 import dto.AnioDTO;
 import dto.DiasDTO;
 import dto.SemanaDTO;
 import dto.TacticaDTO;
+import java.awt.Color;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import modelo.Anio12SemanasLocalDAO;
 import modelo.ConfigManager;
 import modelo.IAnio12SemanasDAO;
 import patrones.IPatronObservador;
+import util.ConstantesGUI;
 
 /**
  *
@@ -27,26 +33,31 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
     LocalDate hoy = LocalDate.now();
     long dias;
     int dia;
+    int porcentaje[] = new int[2];
     
     private final IAnio12SemanasDAO anioDAO = new Anio12SemanasLocalDAO();
-    
+    private FrmInicio inicio;
+    private Controlador control;
+    private CustomDLG confirmar;
+
     
 
             
     /**
      * Creates new form JPanelSeccioAnio
      */
-    public ViewJPanelSeccioAnio() {
+    public ViewJPanelSeccioAnio(Controlador control, FrmInicio inicio) {
         initComponents();
         
+        this.inicio = inicio;
+        this.control = control;
         
         cargarDatos();
         
         cargarColores();
         
         ConfigManager.addObserver(this);
-        
-        
+                
     }
     
     
@@ -96,6 +107,11 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
         jblFecha.setText("Semana " + semana + " Dia " + dia);
         
         cargarAnio();
+        establecerPorncentaje();
+        
+        confirmar = new CustomDLG(inicio, true, "Segiro", ConstantesGUI.ADVERTENCIA);
+
+
     }
     
     
@@ -103,18 +119,40 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
             
         TacticaDTO tactica = new TacticaDTO();
         
-        for(int i = 0; i < anio.getlistaTacticasDTO().size(); i++){
-            tactica = (TacticaDTO) anio.getlistaTacticasDTO().get(i);
+        for(int i = 0; i < anio.getListaTacticasDTO().size(); i++){
+            tactica = (TacticaDTO) anio.getListaTacticasDTO().get(i);
             DesingJPanelCheckTactica addTactica = new DesingJPanelCheckTactica(hoy.getDayOfWeek().name());
             addTactica.setBounds(0, 40 * i, 560, 40);
             
             addTactica.getTxtNomTactica().setText(tactica.getNombre());
+            
+            
+//            addTactica.setDiaChangeListener(completado ->{
+//                if(completado){
+//                    porcentaje[1] = porcentaje[1] + 1;
+//
+//                }
+//                else{
+//                    porcentaje[1] = porcentaje[1] - 1;
+//
+//                }
+//                diaDatos.setCompletado(completado);
+//                
+//               // control.editarAnio(anio);
+//                
+//                establecerPorncentaje();
+//
+//            
+//            });
+            
+            
             
             List<SemanaDTO> listaSemanas = tactica.getsemanasDTO();
             
             for (SemanaDTO semana : listaSemanas){
 
                 boolean dentro = !hoy.isBefore(semana.getFechaInicio()) && !hoy.isAfter(semana.getFechaFin());
+                
                 
                 
                 if(dentro){
@@ -154,7 +192,30 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
         for(DiasDTO d : semana.getListaDias()){
             String nomdia = d.getFecha().getDayOfWeek().name().toLowerCase();
             
+            if(d.getFecha().isEqual(hoy)){
+                panel.setDiaChangeListener(completado ->{
+                    if(completado){
+                        porcentaje[1] = porcentaje[1] + 1;
+
+                    }
+                    else{
+                        porcentaje[1] = porcentaje[1] - 1;
+
+                    }
+                    d.setCompletado(completado);
+                    System.out.println(d.toString());
+                   // control.editarAnio(anio);
+
+                    establecerPorncentaje();
+
+
+                });
+            }
+            
+            
+            
             verificarDia(panel, d, nomdia);
+                        
  
         }
         
@@ -162,135 +223,198 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
     }
     
     
-    
-    
-    private void verificarDia(DesingJPanelCheckTactica panel, DiasDTO diaDatos, String nombreDia){
+    private void verificarDia(DesingJPanelCheckTactica panel, DiasDTO diaDatos, String nombreDia) {
+        Map<String, CustomPanelRedondo> panelPorDia = Map.of(
+            "monday",    panel.getPanelLuSelect(),
+            "tuesday",   panel.getPanelMaSelect(),
+            "wednesday", panel.getPanelMiSelect(),
+            "thursday",  panel.getPanelJuSelect(),
+            "friday",    panel.getPanelViSelect(),
+            "saturday",  panel.getPanelSaSelect(),
+            "sunday",    panel.getPanelDoSelect()
+        );
 
-        switch(nombreDia){
-            case "monday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelLuSelect().setMostrarLinea(true);
-                    break;
-               }
+        CustomPanelRedondo panelSelect = panelPorDia.get(nombreDia);
 
-               if(diaDatos.isCompletado()){
-                  panel.getPanelLuSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelLuSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            case "tuesday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelMaSelect().setMostrarLinea(true);
-                    break;
-               }
+        if (panelSelect == null) return;
 
-               if(diaDatos.isCompletado()){
-                  panel.getPanelMaSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelMaSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            case "wednesday":{
-
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelMiSelect().setMostrarLinea(true);
-                    break;
-               }
-
-               if(diaDatos.isCompletado()){
-                  panel.getPanelMiSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelMiSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            
-            case "thursday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelJuSelect().setMostrarLinea(true);
-                    break;
-               }
-
-               if(diaDatos.isCompletado()){
-                  panel.getPanelJuSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelJuSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            
-            case "friday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelViSelect().setMostrarLinea(true);
-                    break;
-               }
-
-               if(diaDatos.isCompletado()){
-                  panel.getPanelViSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelViSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            
-            case "saturday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelSaSelect().setMostrarLinea(true);
-                    break;
-               }
-
-               if(diaDatos.isCompletado()){
-                  panel.getPanelSaSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelSaSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-            
-            case "sunday":{
-                if(!diaDatos.isSeleccionado()){
-                    panel.setDeshabilidato(true);
-                    panel.getPanelDoSelect().setMostrarLinea(true);
-                    //panel.getPanelDoSelect().setBackground(ConfigManager.getDeleteColor());
-                    break;
-               }
-
-               if(diaDatos.isCompletado()){
-                  panel.getPanelDoSelect().setBackground(ConfigManager.getAcceptColor());
-                }
-               else{
-                   panel.getPanelDoSelect().setBackground(ConfigManager.getTextColor());
-               }
-               break;
-            }
-            
-
-            
-        }
-
-    
+        procesarDia(panel, panelSelect, diaDatos);
     }
+
+    
+    private void procesarDia(DesingJPanelCheckTactica panel, CustomPanelRedondo panelSelect, DiasDTO diaDatos) {
+        if (!diaDatos.isSeleccionado()) {
+            panelSelect.setMostrarLinea(true);
+            return;
+        }
+                
+        
+        if(diaDatos.isCompletado()){
+            panelSelect.setBackground(ConfigManager.getAcceptColor());
+            panelSelect.putClientProperty("selected", true);
+
+            porcentaje[1] = porcentaje[1] + 1;
+
+        }
+        else{
+            panelSelect.setBackground(ConfigManager.getTextColor());
+            panelSelect.putClientProperty("selected", false);
+
+
+        }
+            porcentaje[0] = porcentaje[0] + 1;
+            
+
+    }
+
+    
+    
+    private void establecerPorncentaje(){
+        float resultado = ((float) porcentaje[1] * 100) / porcentaje[0];
+        
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        jblPorcentaje.setText(df.format(resultado) + "%");
+
+    }
+    
+    
+    private void diaCompletado(DiasDTO dia, boolean completado) {
+
+        dia.setCompletado(completado);
+        control.editarAnio(anio);
+    }
+    
+    
+    
+//    private void verificarDia(DesingJPanelCheckTactica panel, DiasDTO diaDatos, String nombreDia){
+//
+//        switch(nombreDia){
+//            case "monday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelLuSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelLuSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelLuSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            case "tuesday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelMaSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelMaSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelMaSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            case "wednesday":{
+//
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelMiSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelMiSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelMiSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            
+//            case "thursday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelJuSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelJuSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelJuSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            
+//            case "friday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelViSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelViSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelViSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            
+//            case "saturday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelSaSelect().setMostrarLinea(true);
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelSaSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelSaSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//            
+//            case "sunday":{
+//                if(!diaDatos.isSeleccionado()){
+//                    panel.setDeshabilidato(true);
+//                    panel.getPanelDoSelect().setMostrarLinea(true);
+//                    //panel.getPanelDoSelect().setBackground(ConfigManager.getDeleteColor());
+//                    break;
+//               }
+//
+//               if(diaDatos.isCompletado()){
+//                  panel.getPanelDoSelect().setBackground(ConfigManager.getAcceptColor());
+//                }
+//               else{
+//                   panel.getPanelDoSelect().setBackground(ConfigManager.getTextColor());
+//               }
+//               break;
+//            }
+//            
+//
+//            
+//        }
+//
+//    
+//    }
     
     
     
@@ -322,6 +446,7 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
         jPanelEncabezado = new vista.CustomPanelRedondo(15,15,0,0, true);
         txtNomObjetivo = new vista.CustomJTextFieldRedondo(5,5,5,5, false);
         jblFecha = new javax.swing.JLabel();
+        jblPorcentaje = new javax.swing.JLabel();
         panelNombre = new vista.CustomPanelRedondo();
         jblLu1 = new javax.swing.JLabel();
         panelContenedorAnio = new vista.CustomPanelRedondo();
@@ -340,17 +465,19 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
         jblSa = new javax.swing.JLabel();
         panelDo = new vista.CustomPanelRedondo();
         jblDo = new javax.swing.JLabel();
+        btnEliminar = new vista.CustomPanelRedondo();
+        jblEliminar = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(47, 47, 47));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(67, 67, 67)));
-        setPreferredSize(new java.awt.Dimension(527, 613));
+        setPreferredSize(new java.awt.Dimension(1046, 614));
         setLayout(null);
 
         jblInicio1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jblInicio1.setForeground(new java.awt.Color(255, 255, 255));
         jblInicio1.setText("Año de 12 Semanas");
         add(jblInicio1);
-        jblInicio1.setBounds(60, 20, 220, 30);
+        jblInicio1.setBounds(30, 20, 220, 30);
 
         jPanelEncabezado.setBackground(new java.awt.Color(52, 125, 210));
         jPanelEncabezado.setLayout(null);
@@ -375,6 +502,13 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
         jblFecha.setText("Semana 1 - Día 1");
         jPanelEncabezado.add(jblFecha);
         jblFecha.setBounds(20, 90, 200, 27);
+
+        jblPorcentaje.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jblPorcentaje.setForeground(new java.awt.Color(255, 255, 255));
+        jblPorcentaje.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jblPorcentaje.setText("100 %");
+        jPanelEncabezado.add(jblPorcentaje);
+        jblPorcentaje.setBounds(340, 90, 200, 27);
 
         add(jPanelEncabezado);
         jPanelEncabezado.setBounds(30, 70, 560, 130);
@@ -499,16 +633,90 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
 
         add(panelFrecuencia);
         panelFrecuencia.setBounds(245, 200, 345, 40);
+
+        btnEliminar.setBackground(new java.awt.Color(244, 50, 11));
+        btnEliminar.setRoundBottomLeft(5);
+        btnEliminar.setRoundBottomRight(5);
+        btnEliminar.setRoundTopLeft(5);
+        btnEliminar.setRoundTopRight(5);
+        btnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnEliminarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnEliminarMouseExited(evt);
+            }
+        });
+        btnEliminar.setLayout(null);
+
+        jblEliminar.setBackground(new java.awt.Color(0, 0, 0));
+        jblEliminar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jblEliminar.setForeground(new java.awt.Color(0, 0, 0));
+        jblEliminar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jblEliminar.setText("X");
+        jblEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jblEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jblEliminarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jblEliminarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jblEliminarMouseExited(evt);
+            }
+        });
+        btnEliminar.add(jblEliminar);
+        jblEliminar.setBounds(0, 0, 40, 40);
+
+        add(btnEliminar);
+        btnEliminar.setBounds(550, 20, 40, 40);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtNomObjetivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomObjetivoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomObjetivoActionPerformed
 
+    private void jblEliminarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jblEliminarMouseEntered
+        // TODO add your handling code here:
+        btnEliminar.setBorderColor(ConfigManager.getPrimaryColor());
+        btnEliminar.setBorderThickness(1.5f);
+        
+    }//GEN-LAST:event_jblEliminarMouseEntered
+
+    private void btnEliminarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseEntered
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnEliminarMouseEntered
+
+    private void btnEliminarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseExited
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnEliminarMouseExited
+
+    private void jblEliminarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jblEliminarMouseExited
+        // TODO add your handling code here:
+        btnEliminar.setBorderColor(Color.BLACK);
+        btnEliminar.setBorderThickness(1.0f);
+    }//GEN-LAST:event_jblEliminarMouseExited
+
+    private void jblEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jblEliminarMouseClicked
+        // TODO add your handling code here:
+        CustomDLG confirmar = new CustomDLG(inicio, true, "Seguro", ConstantesGUI.ADVERTENCIA);
+        confirmar.setVisible(true);
+        
+        if(confirmar.isConfirmado()){
+            control.eliminarAnio(anio);
+        }
+        
+    }//GEN-LAST:event_jblEliminarMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private vista.CustomPanelRedondo btnEliminar;
     private javax.swing.JPanel jPanelEncabezado;
     private javax.swing.JLabel jblDo;
+    private javax.swing.JLabel jblEliminar;
     private javax.swing.JLabel jblFecha;
     private javax.swing.JLabel jblInicio1;
     private javax.swing.JLabel jblJu;
@@ -516,6 +724,7 @@ public class ViewJPanelSeccioAnio extends javax.swing.JPanel implements IPatronO
     private javax.swing.JLabel jblLu1;
     private javax.swing.JLabel jblMa;
     private javax.swing.JLabel jblMi;
+    private javax.swing.JLabel jblPorcentaje;
     private javax.swing.JLabel jblSa;
     private javax.swing.JLabel jblVi;
     private vista.CustomPanelRedondo panelContenedorAnio;

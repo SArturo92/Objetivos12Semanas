@@ -131,8 +131,24 @@ public class Anio12SemanasLocalDAO implements IAnio12SemanasDAO{
     }
 
     @Override
-    public AnioDTO eliminarAnio(AnioDTO anio) throws DAOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void eliminarAnio(AnioDTO anioEliminar) throws DAOException {
+        try {
+            List<AnioDTO> lista = cargarTodos();
+
+            boolean eliminado = lista.removeIf(anio -> anio.getId() == anioEliminar.getId());
+
+            if (!eliminado) {
+                throw new DAOException("No se encontró Anio con id: " + anioEliminar.getId());
+            }
+
+            Files.createDirectories(DATA_PATH.getParent());
+            Files.writeString(DATA_PATH, GSON.toJson(lista));
+
+        }
+            
+        catch (IOException e) {
+            throw new DAOException("Error eliminando Anio", e);
+        }
     }
     
 }

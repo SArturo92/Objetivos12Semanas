@@ -168,7 +168,7 @@ public class Controlador implements IPatronObservador{
         jPanelSeccionDatos.removeAll();
         anio = anioDAO.cargarAnio();
         if(anio != null){
-            panelSeccionAnio = new ViewJPanelSeccioAnio();
+            panelSeccionAnio = new ViewJPanelSeccioAnio(this, inicio);
             panelSeccionAnio.setBounds(0, 0, jPanelSeccionDatos.getBounds().width, jPanelSeccionDatos.getBounds().height);
        
             inicio.setSeleccion('h');
@@ -258,6 +258,20 @@ public class Controlador implements IPatronObservador{
     public void guardarAnio(AnioDTO anio){
         anioDAO.guardarAnio(anio);
         System.out.println("Se guardo");
+        cargarPanel('h');
+        inicio.comprobarSeleccion('h');
+    }
+    
+    public void editarAnio(AnioDTO anio){
+        anioDAO.editarAnio(anio);
+        System.out.println("Se edito");
+        cargarPanel('h');
+        inicio.comprobarSeleccion('h');
+    }
+    
+    public void eliminarAnio(AnioDTO anio){
+        anioDAO.eliminarAnio(anio);
+        System.out.println("Se elimino");
         cargarPanel('h');
         inicio.comprobarSeleccion('h');
     }

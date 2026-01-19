@@ -70,6 +70,15 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
         panelSaSelect.putClientProperty("selected", true);
         panelDoSelect.putClientProperty("selected", true);
         
+        panelLuSelect.putClientProperty("selected", true);
+        panelMaSelect.putClientProperty("selected", true);
+        panelMiSelect.putClientProperty("selected", true);
+        panelJuSelect.putClientProperty("selected", true);
+        panelViSelect.putClientProperty("selected", true);
+        panelSaSelect.putClientProperty("selected", true);
+        panelDoSelect.putClientProperty("selected", true);
+        
+        
         txtNomTactica.setVisible(false);
         MetodosCompartidos.addHint(txtNomTactica, "Nombre de la tactica");
         
@@ -590,7 +599,6 @@ public class DesingJPanelAddTactica extends CustomPanelRedondo {
 
     private void panelDoSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelDoSelectMouseClicked
         // TODO add your handling code here:
-        if(creado) return;
         comprobarSeleccion(panelDoSelect);
     }//GEN-LAST:event_panelDoSelectMouseClicked
 

@@ -23,6 +23,6 @@ public interface IAnio12SemanasDAO {
     
     public AnioDTO editarAnio(AnioDTO anio) throws DAOException;
     
-    public AnioDTO eliminarAnio(AnioDTO anio) throws DAOException;
+    public void eliminarAnio(AnioDTO anio) throws DAOException;
     
 }

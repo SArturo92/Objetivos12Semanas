@@ -83,14 +83,6 @@ public class AnioDTO {
         this.descripcion = descripcion;
     }
 
-    public List getlistaTacticasDTO() {
-        return listaTacticasDTO;
-    }
-
-    public void setlistaTacticasDTO(List listaTacticasDTO) {
-        this.listaTacticasDTO = listaTacticasDTO;
-    }
-
     
     public List<String> getEvaluacionSemana() {
         return evaluacionSemana;

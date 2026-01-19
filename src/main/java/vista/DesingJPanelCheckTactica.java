@@ -11,12 +11,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import util.MetodosCompartidos;
+import patrones.IListenerDia;
 /**
  *
  * @author Sergio Arturo
  */
 public class DesingJPanelCheckTactica extends CustomPanelRedondo {
+
+    
+    private IListenerDia listener;
 
     
     private float alpha = 1f;
@@ -49,6 +52,12 @@ public class DesingJPanelCheckTactica extends CustomPanelRedondo {
                 
         cargarDiseno();
         
+        
+    }
+    
+    
+    public void setDiaChangeListener(IListenerDia listener) {
+        this.listener = listener;
     }
 
     
@@ -60,8 +69,16 @@ public class DesingJPanelCheckTactica extends CustomPanelRedondo {
         panelMiSelect.putClientProperty("nombre", "wednesday");
         panelJuSelect.putClientProperty("nombre", "thursday");
         panelViSelect.putClientProperty("nombre", "friday");
-        panelSaSelect.putClientProperty("nombre", "sunday");
-        panelDoSelect.putClientProperty("nombre", "saturday");
+        panelSaSelect.putClientProperty("nombre", "saturday");
+        panelDoSelect.putClientProperty("nombre", "sunday");
+        
+        panelLuSelect.putClientProperty("selected", true);
+        panelMaSelect.putClientProperty("selected", true);
+        panelMiSelect.putClientProperty("selected", true);
+        panelJuSelect.putClientProperty("selected", true);
+        panelViSelect.putClientProperty("selected", true);
+        panelSaSelect.putClientProperty("selected", true);
+        panelDoSelect.putClientProperty("selected", true);
         
        // MetodosCompartidos.addHint(txtNomTactica, "Nombre de la tactica");
         
@@ -93,14 +110,25 @@ public class DesingJPanelCheckTactica extends CustomPanelRedondo {
         if(!panel.getClientProperty("nombre").toString().equalsIgnoreCase(dia) || deshabilidato == true) 
             return;
                
-        
-        if(completado){
-            panel.setBackground(Color.WHITE);
+        if(Boolean.TRUE.equals(panel.getClientProperty("selected"))){
+            panel.setBackground(ConfigManager.getTextColor());
+            panel.putClientProperty("selected", false);
             completado = false;
+            
+            if (listener != null) {
+            listener.onDiaComplete(completado);
+        }
+            
+            
         }
         else{
            panel.setBackground(ConfigManager.getAcceptColor());
            completado = true;
+           panel.putClientProperty("selected", true);
+           
+           if (listener != null) {
+            listener.onDiaComplete(completado);
+        }
         }
         
         
